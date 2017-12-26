@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name        Steam Awards Clicker
 // @author      ZeroUnderscoreOu
-// @version     1.0.1
+// @version     1.0.2
 // @icon        
 // @description Clicker for a random Steam Awards vote
 // @namespace   https://github.com/ZeroUnderscoreOu/
-// @match       http://store.steampowered.com/SteamAwards/
+// @match       *://store.steampowered.com/SteamAwards/
 // @run-at      document-idle
 // @grant       none
 // ==/UserScript==
