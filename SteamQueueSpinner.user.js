@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Steam Queue Spinner
 // @author      ZeroUnderscoreOu
-// @version     1.1.0
+// @version     1.2.0
 // @icon        
 // @description Spinner for your Steam Discovery Queue
 // @namespace   https://github.com/ZeroUnderscoreOu/
@@ -31,13 +31,8 @@ Div.insertBefore(Button.parentElement,Div.firstElementChild);
 
 function QueueGet() {
 	var Ids = Object.keys(GStoreItemData.rgAppData);
-	Queues--; // subtracting in any case
-	if (Ids.length) {
-		console.log("SQS -",Queues,Ids.join(", "));
-		IntervalId = setInterval(QueueClear,1000,Ids);
-	} else {
-		QueueGenerate();
-	};
+	console.log("SQS -",Queues--,Ids.join(", "));
+	IntervalId = setInterval(QueueClear,1000,Ids);
 };
 
 function QueueGenerate() {
@@ -67,7 +62,7 @@ function QueueClear(Ids) {
 		if (Queues>0) {
 			QueueGenerate();
 		} else {
-			Button.textContent = "Spin"
+			//Button.textContent = "Spin"; // keeping 0 as notification about end of spinning
 			console.log("SQS - queues cleared");
 		};
 		return;
