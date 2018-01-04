@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Steam Queue Spinner
 // @author      ZeroUnderscoreOu
-// @version     1.2.0
+// @version     1.3.0
 // @icon        
 // @description Spinner for your Steam Discovery Queue
 // @namespace   https://github.com/ZeroUnderscoreOu/
@@ -16,22 +16,37 @@
 
 "use strict";
 var IntervalId;
-var Queues = 3; // amount of queues to clear
+var Queues = document.querySelector("Div.discover_queue_empty Div.subtext").textContent.match(/-?\d/); // amount of queues to clear; attempting to get amount of cards
+var Style = document.createElement("Style");
 var Button = document.createElement("Div");
 var Div = document.querySelector("Div.discovery_queue_customize_ctn");
-var Style = document.createElement("Style");
+Queues = Queues ? parseInt(Queues[0],10) : 0;
+if (Queues<1) { // potential fix for Steam error
+	Queues = 3;
+};
+console.log("SQS - queues expected:",Queues);
+Style.textContent = "#QueueButton {Min-Width: 100px; Text-Align: Center;}";
 Button.id = "QueueButton";
 Button.className = "btnv6_blue_hoverfade btn_medium";
-Button.addEventListener("click",QueueGet);
+if (Object.keys(GStoreItemData.rgAppData).length==0) { // if page queue is empty
+	Button.addEventListener("click",QueueGenerate);
+} else {
+	Button.addEventListener("click",QueueGet);
+};
 Button = Button.appendChild(document.createElement("Span"))
 Button.textContent = "Spin";
-Style.textContent = "#QueueButton {Min-Width: 100px; Text-Align: Center;}";
 document.head.appendChild(Style);
 Div.insertBefore(Button.parentElement,Div.firstElementChild);
 
-function QueueGet() {
-	var Ids = Object.keys(GStoreItemData.rgAppData);
-	console.log("SQS -",Queues--,Ids.join(", "));
+function QueueGet(Event,Queue) { // intentionally not providing default value for Queue
+	// there is a problem with queue when there are unavailable apps in it:
+	// Store itself manages it fine now, but spinning fails;
+	// queue should contain full list, but IDK how to get it from page itself,
+	// so I use rgAppData as a fallback
+	var Ids = Queue || Object.keys(GStoreItemData.rgAppData);
+	Button.textContent = `Spin (${Queues*12})`; // for visibility with empty queues
+	console.log("SQS -",Queues,Ids.join(", "));
+	Queues--;
 	IntervalId = setInterval(QueueClear,1000,Ids);
 };
 
@@ -48,9 +63,13 @@ function QueueGenerate() {
 	fetch(Address,Init)
 	.then((Data)=>(Data.json()))
 	.then((Data)=>{
-		GStoreItemData.rgAppData = Data.rgAppData;
+		GStoreItemData.rgAppData = Data.rgAppData; // writing for fallback
+		if (GStoreItemData.rgAppData==undefined) { // IDK why it's happening; need testing
+			console.log("SQS - bad response:",Data.rgAppData,Data.queue,"\r\n",Data);
+			GStoreItemData.rgAppData = {};
+		};
 		console.log("SQS - queue generated");
-		QueueGet();
+		QueueGet(null,Data.queue);
 	})
 	.catch((Error)=>{console.error("SQS -",Error);});
 };
@@ -62,7 +81,7 @@ function QueueClear(Ids) {
 		if (Queues>0) {
 			QueueGenerate();
 		} else {
-			//Button.textContent = "Spin"; // keeping 0 as notification about end of spinning
+			Button.textContent = "Spin (0)"; // for visibility with empty queues
 			console.log("SQS - queues cleared");
 		};
 		return;
