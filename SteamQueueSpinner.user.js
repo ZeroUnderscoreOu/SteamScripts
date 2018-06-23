@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Steam Queue Spinner
 // @author      ZeroUnderscoreOu
-// @version     1.3.0
+// @version     1.3.1
 // @icon        
 // @description Spinner for your Steam Discovery Queue
 // @namespace   https://github.com/ZeroUnderscoreOu/
@@ -10,7 +10,7 @@
 // ==/UserScript==
 
 /*
-Почему относительные протокола адреса ("//") нормально работают в консоли, но выдают ошибку в GM? Пришлось жёстко вписать протокол (хотя в данном случае это не имеет большой разницы, т.к. всё равно эти адреса не поддерживают HTTPS).
+Почему относительные протокола адреса ("//") нормально работают в консоли, но выдают ошибку в GM? Пришлось жёстко вписать протокол (с учётом введённой поддержки HTTPS Стимом).
 Переписать стиль спэна на инлайн?
 */
 
@@ -51,7 +51,7 @@ function QueueGet(Event,Queue) { // intentionally not providing default value fo
 };
 
 function QueueGenerate() {
-	var Address = "http://store.steampowered.com/explore/generatenewdiscoveryqueue";
+	var Address = "https://store.steampowered.com/explore/generatenewdiscoveryqueue";
 	var Data = new FormData();
 	var Init = {
 		method: "Post",
@@ -86,7 +86,7 @@ function QueueClear(Ids) {
 		};
 		return;
 	};
-	var Address = "http://store.steampowered.com/app/" + Id;
+	var Address = "https://store.steampowered.com/app/" + Id;
 	var Data = new FormData();
 	var Init = {
 		method: "Post",
