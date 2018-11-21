@@ -1,20 +1,21 @@
-var Link = "http://store.steampowered.com/promotion/nominategame";
+/*
+As far as I understand, source parameter marks location from which game was nominated:
+1 - store page
+2 - awards page, suggested game
+3 - awards page, search result game
+*/
+
+var Link = "https://store.steampowered.com/steamawards/nominategame";
 var Nominations = [
-	95400,
-	554620,
-	730,
-	221640,
-	201210,
-	375750,
-	304650,
-	319630,
-	643270,
-	262830,
-	392110,
+	583950,
+	34270,
 	286160,
-	10
+	4,
+	554620,
+	386940,
+	646570,
+	544390
 ];
-var WriteIn = "Where it all begins";
 var Form = new FormData();
 var Init = {
 	method: "Post",
@@ -22,15 +23,12 @@ var Init = {
 	body: Form
 };
 Form.append("sessionid",g_sessionID);
+Form.append("source",3);
 NominationPost();
 
 function NominationPost(CategoryId=1) {
-	var AppId = Nominations[CategoryId-1];
-	Form.set("appid",AppId);
+	Form.set("nominatedid",Nominations[CategoryId-1]);
 	Form.set("categoryid",CategoryId);
-	if (CategoryId==Nominations.length) {
-		Form.append("writein",WriteIn);
-	};
 	fetch(Link,Init).then((Data)=>(Data.json())).then((Data)=>{
 		if (Data) {
 			Data = Data.rgCategories[CategoryId-1].label;
@@ -39,7 +37,7 @@ function NominationPost(CategoryId=1) {
 		if (CategoryId!=Nominations.length) {
 			setTimeout(NominationPost,1000,++CategoryId);
 		} else {
-			document.location.reload();
+			document.location.href = "https://store.steampowered.com/SteamAwardNominations";
 		};
 	}).catch((Message)=>{console.error("SteamNominations error:",Message);});
 };
