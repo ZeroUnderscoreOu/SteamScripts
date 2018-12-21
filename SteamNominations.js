@@ -1,20 +1,15 @@
-/*
-As far as I understand, source parameter marks location from which game was nominated:
-1 - store page
-2 - awards page, suggested game
-3 - awards page, search result game
-*/
+// 1.0.0-Winter2018
 
-var Link = "https://store.steampowered.com/steamawards/nominategame";
+var Link = "https://store.steampowered.com/salevote";
 var Nominations = [
-	583950,
-	34270,
-	286160,
-	4,
-	554620,
-	386940,
-	646570,
-	544390
+	863550,
+	617830,
+	570,
+	32989758,
+	750920,
+	730,
+	289070,
+	227300
 ];
 var Form = new FormData();
 var Init = {
@@ -23,21 +18,25 @@ var Init = {
 	body: Form
 };
 Form.append("sessionid",g_sessionID);
-Form.append("source",3);
 NominationPost();
 
-function NominationPost(CategoryId=1) {
-	Form.set("nominatedid",Nominations[CategoryId-1]);
-	Form.set("categoryid",CategoryId);
-	fetch(Link,Init).then((Data)=>(Data.json())).then((Data)=>{
-		if (Data) {
-			Data = Data.rgCategories[CategoryId-1].label;
-		};
+function NominationPost(VoteId=1) {
+	if (VoteId==4) { //developer nomination
+		Form.set("appid",0);
+		Form.set("developerid",Nominations[VoteId-1]);
+	} else {
+		Form.set("appid",Nominations[VoteId-1]);
+		Form.set("developerid",0);
+	};
+	Form.set("voteid",VoteId+25); // first index is 26
+	fetch(Link,Init).then((Data)=>(Data.text())).then((Data)=>{
+		Data = Data.match(/breakafter">\s+(.*?)\s+<\/div>/);
+		Data = Data ? Data[1] : "No data";
 		console.log(Data);
-		if (CategoryId!=Nominations.length) {
-			setTimeout(NominationPost,1000,++CategoryId);
+		if (VoteId!=Nominations.length) {
+			setTimeout(NominationPost,1000,++VoteId);
 		} else {
-			document.location.href = "https://store.steampowered.com/SteamAwardNominations";
+			document.location.href = "https://store.steampowered.com/SteamAwards/2018/";
 		};
 	}).catch((Message)=>{console.error("SteamNominations error:",Message);});
 };
