@@ -1,4 +1,4 @@
-// 1.1.0-2019Autumn
+// 1.1.0-2020Autumn
 /*
 As far as I understand, source parameter marks location from which game was nominated:
 1 - store page
@@ -9,14 +9,16 @@ As far as I understand, source parameter marks location from which game was nomi
 var LinkNominate = "https://store.steampowered.com/steamawards/nominategame";
 var LinkCategory = "https://store.steampowered.com/steamawards/category/";
 var Nominations = [ // fallback nominations
-	583950, // Artifact
-	620980, // Beat Saber
-	730,    // Counter-Strike: Global Offensive
-	976310, // Mortal Kombat 11
-	449960, // Book of Demons
-	596970, // Sunless Skies
-	646570, // Slay the Spire
-	683320  // GRIS
+	601840,  // Griftlands
+	546560,  // Half-Life: Alyx
+	730,     // Counter-Strike: Global Offensive
+	739630,  // Phasmophobia
+	1049410, // Superliminal
+	893850,  // The Longing
+	1172470, // Apex Legends
+	794960,  // The Sojourn
+	719040,  // Wasteland 3
+	473950,  // Manifold Garden
 ];
 var Form = new FormData();
 var Init = {
@@ -61,7 +63,7 @@ function OutsmartingGabe(Nomination=1) {
 
 function NominationPost(Nomination) {
 	Form.set("nominatedid",Nominations[Nomination-1]);
-	Form.set("categoryid",Nomination);
+	Form.set("categoryid",Nomination+49); // nomination Ids start from 50
 	fetch(LinkNominate,Init).then((Data)=>(Data.json())).then((Data)=>{
 		if (Data) {
 			Data = Data.rgCategories[Nomination-1].label;
