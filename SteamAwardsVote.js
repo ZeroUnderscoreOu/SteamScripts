@@ -1,4 +1,4 @@
-// // 1.1.0-2020Winter
+// 1.1.1-2020Winter
 
 var Votes = { // leave empty for random votes
 	50: "1145360", // Hades
