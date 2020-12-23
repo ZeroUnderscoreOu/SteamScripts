@@ -1,15 +1,15 @@
-// 1.1.1-2020Winter
+// 1.2.0-2020Winter
 
 var Votes = { // leave empty for random votes
 	50: "1145360", // Hades
 	51: "546560",  // Half-Life: Alyx
 	52: "275850",  // No Man's Sky
 	53: "632360",  // Risk of Rain 2
-	54: "1049410", // Superliminal
-	55: "1222140", // Detroit: Become Human
+	55: "1049410", // Superliminal
+	58: "1222140", // Detroit: Become Human
 	56: "1172470", // Apex Legends
-	57: "1057090", // Ori and the Will of the Wisps
-	58: "976730",  // Halo: The Master Chief Collection
+	54: "1057090", // Ori and the Will of the Wisps
+	57: "976730",  // Halo: The Master Chief Collection
 	59: "1250410"  // Microsoft Flight Simulator
 };
 
