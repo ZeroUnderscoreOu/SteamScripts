@@ -1,43 +1,52 @@
-// 1.1.1-2021Autumn
+// 1.1.2-2022Autumn
 /*
 As far as I understand, source parameter marks location from which game was nominated:
-1 - store page
+1 - store page, skipped nominations
 2 - awards page, suggested game
 3 - awards page, search result game
+Can also use new URL to post nominations
+https://store.steampowered.com/steamawards/ajaxnominategame
 */
 
 var LinkNominate = "https://store.steampowered.com/steamawards/nominategame";
 var LinkCategory = "https://store.steampowered.com/steamawards/category/";
 var Nominations = [ // fallback nominations
-	601840,  // Griftlands
-	1255560, // Myst
-	10,      // Counter-Strike
-	1509960, // PICO PARK
-	593640,  // Papetura
-	893720,  // One Hand Clapping
-	1110910, // Mortal Shell
-	1038370, // Trials of Fire
-	1091500, // Cyberpunk 2077
-	990630   // The Last Campfire
+	1245620, // ELDEN RING
+	1599560, // Wanderer; use 2215130 to skip
+	2004320, // Duelyst II
+	1385380, // Across the Obelisk
+	698670,  // Scorn
+	1260520, // Patrick's Parabox
+	1494260, // Loot River
+	1332010, // Stray
+	1221250, // NORCO
+	1622770, // Doors: Paradox
+	1794680  // Vampire Survivors; use 2218020 to skip
 ];
-var Shift = 61; // starting nomination index; continues from previous year
+var Shift = 72; // starting nomination index; continues from previous year
 var Suggestions = []; // storing used suggestions; can't nominate same game multiple types
-Form = new FormData();
+var Form = new FormData();
 var Init = {
 	method: "Post",
 	credentials: "include",
 	body: Form
 };
-if (!g_sessionID) {
-	var g_sessionID = document.cookie.match(/sessionid=([^;]+)/);
-	if (g_sessionID) {
-		g_sessionID = g_sessionID[1];
-		Form.append("sessionid",g_sessionID);
-		Form.append("source",3);
-		OutsmartingGabe();
-	} else {
-		console.error("Can't get session Id");
+var Session;
+
+try {
+	Session = g_sessionID;
+} catch {
+	try {
+		Session = document.cookie.match(/sessionid=([^;]+)/)[1];
+	} catch(Data) {
+		console.log("Can't get session Id",Data);
 	};
+};
+
+if (Session) {
+	Form.append("sessionid",Session);
+	Form.append("source",3);
+	OutsmartingGabe();
 };
 
 function OutsmartingGabe(Nomination=0) {
@@ -71,7 +80,7 @@ function NominationPost(Nomination) {
 	Form.set("nominatedid",Nominations[Nomination]);
 	Form.set("categoryid",Nomination+Shift); // nomination Ids increase over years
 	fetch(LinkNominate,Init).then((Data)=>(Data.json())).then((Data)=>{
-		if (Data) {
+		if (Data&&Data.success==1) {
 			Data = Data.rgCategories[Nomination].label;
 		};
 		console.log(Data);
