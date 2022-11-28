@@ -1,6 +1,6 @@
-// 1.1.2-2022Autumn
+// 1.1.3-2022Autumn
 /*
-As far as I understand, source parameter marks location from which game was nominated:
+As far as I understand, source parameter marks the location from which a game was nominated:
 1 - store page, skipped nominations
 2 - awards page, suggested game
 3 - awards page, search result game
@@ -78,7 +78,7 @@ function OutsmartingGabe(Nomination=0) {
 
 function NominationPost(Nomination) {
 	Form.set("nominatedid",Nominations[Nomination]);
-	Form.set("categoryid",Nomination+Shift); // nomination Ids increase over years
+	Form.set("categoryid",Nomination+Shift); // nomination Ids increase over the years
 	fetch(LinkNominate,Init).then((Data)=>(Data.json())).then((Data)=>{
 		if (Data&&Data.success==1) {
 			Data = Data.rgCategories[Nomination].label;
