@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Steam Queue Spinner
 // @author      ZeroUnderscoreOu
-// @version     1.3.1
+// @version     1.3.2
 // @icon        
 // @description Spinner for your Steam Discovery Queue
 // @namespace   https://github.com/ZeroUnderscoreOu/
@@ -15,15 +15,19 @@
 */
 
 "use strict";
+
 var IntervalId;
-var Queues = document.querySelector("Div.discover_queue_empty Div.subtext").textContent.match(/-?\d/); // amount of queues to clear; attempting to get amount of cards
+var Queues = document.querySelector("Div.discover_queue_empty Div.subtext"); // amount of queues to clear; attempting to get amount of cards
 var Style = document.createElement("Style");
 var Button = document.createElement("Div");
 var Div = document.querySelector("Div.discovery_queue_customize_ctn");
-Queues = Queues ? parseInt(Queues[0],10) : 0;
+
+Queues = Queues ? parseInt(Queues.textContent.match(/-?\d/)[0],10) : 1; // defaulting to 1 as it seems to be the standard now
+/*
 if (Queues<1) { // potential fix for Steam error
 	Queues = 3;
 };
+*/
 console.log("SQS - queues expected:",Queues);
 Style.textContent = "#QueueButton {Min-Width: 100px; Text-Align: Center;}";
 Button.id = "QueueButton";
