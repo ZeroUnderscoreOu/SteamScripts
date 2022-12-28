@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Steam Queue Spinner
 // @author      ZeroUnderscoreOu
-// @version     1.3.5
+// @version     1.4.0
 // @icon        
 // @description Spinner for your Steam Discovery Queue
 // @namespace   https://github.com/ZeroUnderscoreOu/
@@ -71,11 +71,16 @@ Button.textContent = "Spin";
 document.head.appendChild(Style);
 Div.insertBefore(Button.parentElement,Div.firstElementChild);
 
-function QueueGet(Event,Queue) { // intentionally not providing default value for Queue
+function QueueGet(Data,Queue) { // intentionally not providing default value for Queue
 	// there is a problem with queue when there are unavailable apps in it:
 	// Store itself manages it fine now, but spinning fails;
 	// queue should contain full list, but IDK how to get it from page itself,
 	// so I use rgAppData as a fallback
+	if (Data&&Data.ctrlKey) { // generating new queue if Ctrl is held during click
+		console.log("SQS - forcing queue generation");
+		QueueGenerate();
+		return;
+	};
 	var Ids = Queue || RGAD;
 	Button.textContent = `Spin (${Queues*12})`; // for visibility with empty queues
 	console.log("SQS -",Queues,Ids.join(", "));
@@ -116,7 +121,8 @@ function QueueClear(Ids) {
 		if (Queues>0) {
 			QueueGenerate();
 		} else {
-			Button.textContent = "Spin (0)"; // for visibility with empty queues
+			Button.textContent = "Done"; // for better visibility
+			Queues = 1; // resetting to 1 in case user wants to spin again
 			console.log("SQS - queues cleared");
 		};
 		return;
