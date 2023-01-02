@@ -1,52 +1,68 @@
-// 1.2.0-2020Winter
+// 1.3.0-2022Winter
 
-var Votes = { // leave empty for random votes
-	50: "1145360", // Hades
-	51: "546560",  // Half-Life: Alyx
-	52: "275850",  // No Man's Sky
-	53: "632360",  // Risk of Rain 2
-	55: "1049410", // Superliminal
-	58: "1222140", // Detroit: Become Human
-	56: "1172470", // Apex Legends
-	54: "1057090", // Ori and the Will of the Wisps
-	57: "976730",  // Halo: The Master Chief Collection
-	59: "1250410"  // Microsoft Flight Simulator
+var LinkVote = "https://store.steampowered.com/salevote";
+var Votes = [ // fallback votes; empty for random
+	1245620, // ELDEN RING
+	1592190, // BONELAB
+	570,     // Dota 2
+	1144200, // Ready or Not
+	698670,  // Scorn
+	1637320, // Dome Keeper
+	1245620, // ELDEN RING
+	1462040, // FINAL FANTASY VII REMAKE INTERGRADE
+	1703340, // The Stanley Parable: Ultra Deluxe
+	1455840, // Dorfromantik
+	1794680, // Vampire Survivors
+];
+var Shift = 72; // starting nomination index; continues from previous year
+var NominatedApps = [];
+var MarkedAsNominated = document.getElementsByClassName("user_nominated_app");
+
+if (MarkedAsNominated.length > 0) {
+	for (let App of MarkedAsNominated) {
+		App = App.parentElement;
+		NominatedApps[App.dataset["voteid"]] = App.dataset["voteAppid"];
+		console.log(`Previously nominated app ${App.dataset["voteAppid"]} in category ${App.dataset["voteid"]}`);
+	};
 };
 
-function GetIds() {
-	Object.values(g_rgVideoConfig).forEach((Value)=>{
-		let Category = Value.voteid;
-		let Ids = Object.keys(Value.videoFeatureTimes);
-		Votes[Category] = Ids[Math.floor(Math.random()*Ids.length)];
+function GenerateVotes() {
+	g_rgAwardSectionScrollDefs.forEach((Section) => {
+		let Category = Section.voteid;
+		if (Category in NominatedApps) {
+			Votes[Category - Shift] = NominatedApps[Category];
+		} else {
+			let VoteRNG = Math.floor(Math.random() * Section.rgApps.length);
+			VoteRNG = Section.rgApps[VoteRNG].dataset["voteAppid"];
+			Votes[Category - Shift] = VoteRNG;
+			console.log(`Randomly picked app ${VoteRNG} for Section ${Category}`);
+		};
 	});
 	PostVotes();
 };
 
-function PostVotes([Category,Id]=[-1,-1]) {
-	if (Category==-1) {
-		console.log("All done");
-		return;
-	};
-	var Link = "https://store.steampowered.com/salevote";
+function PostVotes(Category = 0) {
 	var Init = {
 		method: "Post",
-		mode: "cors",
 		credentials: "include",
 		body: new FormData()
 	};
-	Init.body.append("sessionid",g_sessionID);
-	Init.body.append("voteid",Category);
-	Init.body.append("appid",Id);
-	Init.body.append("developerid",0);
-	fetch(Link,Init).catch((Message)=>{
-		console.error("Voting error:",Message);
+	Init.body.append("sessionid", g_sessionID);
+	Init.body.append("voteid", Category + Shift);
+	Init.body.append("appid", Votes[Category]);
+	Init.body.append("developerid", 0);
+	fetch(LinkVote, Init).catch((Message) => {
+		console.error("Voting error:", Message);
 	});
-	setTimeout(PostVotes,1000,Votes.pop());
+	if (++Category < Votes.length) {
+		setTimeout(PostVotes, 500, Category);
+	} else {
+		console.log("Voting done");
+	};
 };
 
-if (Object.keys(Votes).length>0) {
-	Votes = Object.entries(Votes);
-	PostVotes(Votes.pop());
+if (Votes.length > 0) {
+	PostVotes();
 } else {
-	GetIds();
+	GenerateVotes();
 };
