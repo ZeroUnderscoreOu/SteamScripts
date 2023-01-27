@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Steam Guide Section Linker
 // @author      ZeroUnderscoreOu
-// @version     1.0.0
+// @version     1.0.1
 // @icon        
 // @description Provides easy way to copy section links from Steam guides.
 // @namespace   https://github.com/ZeroUnderscoreOu/
@@ -22,7 +22,7 @@ for (let L of document.getElementsByClassName("guideSubSectionSelectionLink")) {
 	let A = document.createElement("A");
 	let ID = L.parentElement.id.split("_")[1]; // section ID
 	if (ID == "0") { // there's no dedicated ID for overview section; using top navigation instead (will break someday)
-		ID = "#global_header";
+		ID = "global_header";
 	};
 	A.href = `#${ID}`;
 	A.className = "SGSL";
